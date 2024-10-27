@@ -13,6 +13,15 @@
 #include<map>
 
 
+class graMemory;
+
+
+int main() {
+    setlocale(LC_CTYPE, "Polish");
+    std::unique_ptr<graMemory> gra = std::make_unique<graMemory>();
+    return EXIT_SUCCESS;
+}
+
 
 class graMemory {
 public:
@@ -26,14 +35,14 @@ private:
         bool czyOdsloniety{ false };
     };
 
-    const inline auto rysujKarty(const int& ileKart, const int& rozmiar,const std::string &znak) const { 
+    const inline auto rysujKarty(const int& ileKart, const int& rozmiar, const std::string& znak) const {
         std::ofstream plik("talia_kart_memory.txt");
 
         std::vector<std::vector<std::vector<char>>> karty(ileKart, std::vector<std::vector<char>>(rozmiar, std::vector<char>(rozmiar)));
         if (znak.size() <= 1) return karty;
         std::random_device generator;
         std::mt19937 gen(generator());
-        std::uniform_int_distribution<> losowa(0, znak.size()-1);
+        std::uniform_int_distribution<> losowa(0, znak.size() - 1);
         for (size_t p{}; p < ileKart; ++p) {
             for (size_t x{ 0 }; x < rozmiar; ++x) {
                 for (size_t y{ 0 }; y < rozmiar; ++y) {
@@ -45,7 +54,7 @@ private:
         plik.close();
         return karty;
     }
-    void nowaGra(std::string *pseudomin,long long &rozmiar,std::string &znak,long long &ileKart) {
+    void nowaGra(std::string* pseudomin, long long& rozmiar, std::string& znak, long long& ileKart) {
         std::cout << "Nazwa gracza 1: ";
         while (!(std::cin >> pseudomin[0])) {
             if (std::cin.fail()) oczyscBledy();
@@ -86,7 +95,7 @@ private:
         };
 
         for (char litera = 'a'; litera <= 'z'; ++litera) koloryLitery[litera] = kolory[litera % kolory.size()];
-        
+
 
 
         std::string pseudomin[2] = { "nr.1","nr.2" };
@@ -95,13 +104,13 @@ private:
             nowaGra(pseudomin, rozmiar, znak, ileKart);
             break;
         case 2:
-            if (!odczytajGre(ileKart, rozmiar, znak, tura, ileOdkrytych, punkty, kolejnosc, karty, pseudomin)) nowaGra(pseudomin,rozmiar,znak,ileKart);
+            if (!odczytajGre(ileKart, rozmiar, znak, tura, ileOdkrytych, punkty, kolejnosc, karty, pseudomin)) nowaGra(pseudomin, rozmiar, znak, ileKart);
             break;
         }
 
         karty = this->rysujKarty(ileKart, rozmiar, znak);
 
-        while(znak.size()<=1){
+        while (znak.size() <= 1) {
             std::cout << "Wprowadż znaki do utworzenia kart: "; std::cin >> znak;
             karty = this->rysujKarty(ileKart, rozmiar, znak);
         }
@@ -110,7 +119,7 @@ private:
             return;
         }
 
-        if(kolejnosc.size()<=1) kolejnosc.resize(2 * ileKart);
+        if (kolejnosc.size() <= 1) kolejnosc.resize(2 * ileKart);
 
 
         if (ustawienia != 2) {
@@ -123,16 +132,16 @@ private:
             std::shuffle(kolejnosc.begin(), kolejnosc.end(), los);
         }
 
-        zapiszGre(ileKart,rozmiar,znak,tura,ileOdkrytych,punkty,kolejnosc,karty,pseudomin);
+        zapiszGre(ileKart, rozmiar, znak, tura, ileOdkrytych, punkty, kolejnosc, karty, pseudomin);
         while (ileOdkrytych != ileKart) {
-            this->narysujodnowa(tura, karty, kolejnosc,punkty,pseudomin);
+            this->narysujodnowa(tura, karty, kolejnosc, punkty, pseudomin);
 
             std::cout << niebieski << "\n\nWprowadz 1 numer karty do odkrycia ";
             int numer1{};
             while (numer1 = this->pobierz(2 * ileKart)) {
                 if (!kolejnosc[numer1 - 1].czyOdsloniety) {
                     kolejnosc[numer1 - 1].czyOdsloniety = true;
-                    this->narysujodnowa(tura, karty, kolejnosc,punkty,pseudomin);
+                    this->narysujodnowa(tura, karty, kolejnosc, punkty, pseudomin);
                     break;
                 }
                 else std::cout << czerwony << "To kartę już odsłoniłeś! Jeszcze raz";
@@ -143,14 +152,14 @@ private:
             while (numer2 = this->pobierz(2 * ileKart)) {
                 if (!kolejnosc[numer2 - 1].czyOdsloniety) {
                     kolejnosc[numer2 - 1].czyOdsloniety = true;
-                    this->narysujodnowa(tura, karty, kolejnosc,punkty,pseudomin);
+                    this->narysujodnowa(tura, karty, kolejnosc, punkty, pseudomin);
                     break;
                 }
                 else std::cout << czerwony << "To kartę już odsłoniłeś! Jeszcze raz";
             }
 
             kolejnosc[numer2 - 1].czyOdsloniety = true;
-            this->narysujodnowa(tura, karty, kolejnosc,punkty,pseudomin);
+            this->narysujodnowa(tura, karty, kolejnosc, punkty, pseudomin);
 
 
             if (kolejnosc[numer1 - 1].ktory == kolejnosc[numer2 - 1].ktory) {
@@ -159,35 +168,35 @@ private:
                 ++punkty[tura];
             }
             else {
-                std::cout << czerwony << "\n\nNie pasuje!\n" ;
+                std::cout << czerwony << "\n\nNie pasuje!\n";
 
                 for (int i = 3; i > 0; --i) {
-                    std::cout << "Czas do zakrycia kart: " << i << " sekundy" << std::flush ;
+                    std::cout << "Czas do zakrycia kart: " << i << " sekundy" << std::flush;
                     std::this_thread::sleep_for(std::chrono::seconds(1));
-                    std::cout << "\r";  
+                    std::cout << "\r";
                 }
                 std::cout << reset;
                 kolejnosc[numer1 - 1].czyOdsloniety = false;
                 kolejnosc[numer2 - 1].czyOdsloniety = false;
                 tura = !tura;
             }
-            zapiszGre(ileKart, rozmiar, znak, tura, ileOdkrytych, punkty, kolejnosc, karty,pseudomin);
+            zapiszGre(ileKart, rozmiar, znak, tura, ileOdkrytych, punkty, kolejnosc, karty, pseudomin);
         }
 
         this->narysujodnowa(tura, karty, kolejnosc, punkty, pseudomin);
-        punkty[0]>punkty[1] ? std::cout << "WYGRYWA " << pseudomin[0] : punkty[0] == punkty[1] ? std::cout << "REMIS" : std::cout << "WYGRYWA GRACZ " << pseudomin[1];
+        punkty[0] > punkty[1] ? std::cout << "WYGRYWA " << pseudomin[0] : punkty[0] == punkty[1] ? std::cout << "REMIS" : std::cout << "WYGRYWA GRACZ " << pseudomin[1];
     }
 
-    const inline void narysujodnowa(const bool& tura, const std::vector<std::vector<std::vector<char>>>& karty,const std::vector<stanKarty>& kolejnosc,const long long *punkty,const std::string *pseudomin) const {
-        oczyscKonsole();  
+    const inline void narysujodnowa(const bool& tura, const std::vector<std::vector<std::vector<char>>>& karty, const std::vector<stanKarty>& kolejnosc, const long long* punkty, const std::string* pseudomin) const {
+        oczyscKonsole();
         std::cout << zolty;
         this->wyswietlkarty(karty, kolejnosc);
-        std::cout << zielony << "\033[36mPunkty gracza "<< pseudomin[0] << ": " << punkty[0] << " | Punkty gracza " << pseudomin[1] <<": " << punkty[1] << "\nTura gracza: " << pseudomin[tura] << reset;
+        std::cout << zielony << "\033[36mPunkty gracza " << pseudomin[0] << ": " << punkty[0] << " | Punkty gracza " << pseudomin[1] << ": " << punkty[1] << "\nTura gracza: " << pseudomin[tura] << reset;
     }
 
     const inline void wyswietlkarty(const std::vector<std::vector<std::vector<char>>>& karty, const std::vector<stanKarty>& kolejnosc) const {
         const size_t rozmiar = karty[0].size();
-        const size_t szerokosc_konsoli = 94; 
+        const size_t szerokosc_konsoli = 94;
 
         const size_t szerokosc_karty = rozmiar + 2 + 1;
 
@@ -210,8 +219,8 @@ private:
                 }
                 std::cout << '\n';
             }
-            liczbawyswietlonych += limit_na_rzad; 
-            std::cout << '\n'; 
+            liczbawyswietlonych += limit_na_rzad;
+            std::cout << '\n';
         }
     }
 
@@ -225,12 +234,12 @@ private:
             }
             else {
                 oczyscBledy();
-                std::cout << czerwony<< "Proszę wprowadzić poprawną liczbę całkowitą. ";
+                std::cout << czerwony << "Proszę wprowadzić poprawną liczbę całkowitą. ";
             }
         } std::cout << reset;
     }
 
-    const void zapiszGre(const long long &ileKart,const size_t &rozmiar,const std::string &znak,const bool &tura,const long long &ileOdkrytych,const long long *punkty,const std::vector<stanKarty> &kolejnosc, const std::vector<std::vector<std::vector<char>>> &karty, const std::string* pseudomin) const {
+    const inline void zapiszGre(const long long& ileKart, const size_t& rozmiar, const std::string& znak, const bool& tura, const long long& ileOdkrytych, const long long* punkty, const std::vector<stanKarty>& kolejnosc, const std::vector<std::vector<std::vector<char>>>& karty, const std::string* pseudomin) const {
         std::ofstream plik("pamiec_gry_memory.txt");
         if (plik.good()) {
             plik << pseudomin[0] << ' ' << pseudomin[1] << '\n';
@@ -246,11 +255,11 @@ private:
     }
 
 
-    const bool odczytajGre(long long& ileKart,long long& rozmiar, std::string& znak, bool& tura, long long& ileOdkrytych, long long* punkty, std::vector<stanKarty>& kolejnosc, std::vector<std::vector<std::vector<char>>>& karty,std::string *pseudomin) const {
+    const inline bool odczytajGre(long long& ileKart, long long& rozmiar, std::string& znak, bool& tura, long long& ileOdkrytych, long long* punkty, std::vector<stanKarty>& kolejnosc, std::vector<std::vector<std::vector<char>>>& karty, std::string* pseudomin) const {
         std::ifstream plik("pamiec_gry_memory.txt");
         if (plik.good()) {
             plik >> pseudomin[0] >> pseudomin[1] >> ileKart >> rozmiar >> znak >> punkty[0] >> punkty[1] >> tura >> ileOdkrytych;
-            kolejnosc.resize(2*ileKart);
+            kolejnosc.resize(2 * ileKart);
             for (int i{}; i < 2 * ileKart; ++i) plik >> kolejnosc[i].ktory >> kolejnosc[i].czyOdsloniety;
             plik.close();
         }
@@ -262,17 +271,17 @@ private:
         return true;
     }
 
-    void oczyscBledy() {
+    const inline void oczyscBledy() {
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
 
-    inline void oczyscKonsole() const {
-        #ifdef _WIN32
-            system("cls");
-        #else
+    const inline void oczyscKonsole() const {
+#ifdef _WIN32
+        system("cls");
+#else
         std::cout << "\033[2J\033[1;1H";
-        #endif
+#endif
     }
 
     const std::array<std::string, 5> kolory = {
@@ -284,7 +293,7 @@ private:
     };
 
 
-    std::string kolorDlaLitery(char litera) const {
+    const std::string inline kolorDlaLitery(char litera) const {
         if (koloryLitery.find(litera) != koloryLitery.end()) {
             return koloryLitery.at(litera);
         }
@@ -298,9 +307,3 @@ private:
     const std::string& zolty = kolory[4];
     std::map<char, std::string> koloryLitery;
 };
-
-int main() {
-    setlocale(LC_CTYPE, "Polish");
-    std::unique_ptr<graMemory> gra = std::make_unique<graMemory>();
-    return EXIT_SUCCESS;
-}
