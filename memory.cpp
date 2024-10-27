@@ -94,7 +94,14 @@ private:
         std::vector<stanKarty> kolejnosc;
         bool tura{ 0 };
 
-        std::cout << zielony << "MEMORY: \n1)Nowa gra\n2)Wczytaj ostatnio zapisano gre\n3)Domyślna gra\nWybierz opcje (1-3): ";  short ustawienia{};
+        std::cout << zielony << "\
+ --------------------------------\n\
+|             MEMORY:           |\n\
+|1)Nowa gra                     |\n\
+|2)Wczytaj ostatnio zapisano gre|\n\
+|3)Domyślna gra                 |\n\
+ --------------------------------\n\
+Wybierz opcje (1-3): ";  short ustawienia{};
         while (!(std::cin >> ustawienia) || ustawienia < 1 || ustawienia > 3) {
             if (std::cin.fail()) oczyscBledy();
             std::cerr << czerwony << "Liczba musi być z zakresu 1-3.Wprowadż jeszcze raz: ";
@@ -190,7 +197,9 @@ private:
         }
 
         this->narysujodnowa(tura, karty, kolejnosc, punkty, pseudomin);
+        std::cout << '\n' << czerwony << "--------------------------------------------\n";
         punkty[0] > punkty[1] ? std::cout << "WYGRYWA " << pseudomin[0] : punkty[0] == punkty[1] ? std::cout << "REMIS" : std::cout << "WYGRYWA GRACZ " << pseudomin[1];
+        std::cout << "!!!\n--------------------------------------------" << reset;
     }
 
     const inline void narysujodnowa(const bool& tura, const std::vector<std::vector<std::vector<char>>>& karty, const std::vector<stanKarty>& kolejnosc, const long long* punkty, const std::string* pseudomin) const {
