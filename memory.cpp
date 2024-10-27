@@ -35,18 +35,18 @@ private:
         bool czyOdsloniety{ false };
     };
 
-    const inline auto rysujKarty(const int& ileKart, const int& rozmiar, const std::string& znak) const {
+    const inline auto rysujKarty(const int& ileKart, const int& rozmiar, const std::string& ciog_znakow) const {
         std::ofstream plik("talia_kart_memory.txt");
 
         std::vector<std::vector<std::vector<char>>> karty(ileKart, std::vector<std::vector<char>>(rozmiar, std::vector<char>(rozmiar)));
-        if (znak.size() <= 1) return karty;
+        if (ciog_znakow.size() <= 1) return karty;
         std::random_device generator;
         std::mt19937 gen(generator());
-        std::uniform_int_distribution<> losowa(0, znak.size() - 1);
+        std::uniform_int_distribution<> losowa(0, ciog_znakow.size() - 1);
         for (size_t p{}; p < ileKart; ++p) {
             for (size_t x{ 0 }; x < rozmiar; ++x) {
                 for (size_t y{ 0 }; y < rozmiar; ++y) {
-                    karty[p][x][y] = znak[losowa(gen)];
+                    karty[p][x][y] = ciog_znakow[losowa(gen)];
                     plik << karty[p][x][y];
                 } plik << '\n';
             } plik << '\n';
@@ -54,8 +54,8 @@ private:
         plik.close();
         return karty;
     }
-    void nowaGra(std::string* pseudomin, long long& rozmiar, std::string& znak, long long& ileKart) {
-        std::cout << "Nazwa gracza 1: ";
+    void nowaGra(std::string* pseudomin, long long& rozmiar, std::string& ciog_znakow, long long& ileKart) {
+        std::cout << reset << "Nazwa gracza 1: ";
         while (!(std::cin >> pseudomin[0])) {
             if (std::cin.fail()) oczyscBledy();
             std::cerr << czerwony << "Wprowadż poprawną nazwę jeszcze raz: " << reset;
@@ -68,12 +68,12 @@ private:
         std::cout << "Jakiego rozmiaru mają być karty?(nxn): ";
         while (!(std::cin >> rozmiar) || rozmiar < 3 || rozmiar > 80) {
             if (std::cin.fail()) oczyscBledy();
-            std::cerr << czerwony << "Wprowadż poprawną liczbe oznaczająco rozmiar 1 karty który ma musi być większy od 3 i mniejszy od 80 jeszcze raz: " << reset;
+            std::cerr << czerwony << "Wprowadż poprawną liczbe oznaczająco rozmiar 1 karty który ma musi być większy od 2 i mniejszy od 80 jeszcze raz: " << reset;
         }
-        std::cout << "Jakie znaki mają utworzyć karte?np.abc: ";
-        while (!(std::cin >> znak)) {
+        std::cout << "Jakie ciog_znakowi mają utworzyć karte?np.abc: ";
+        while (!(std::cin >> ciog_znakow) || ciog_znakow.size() <= 1) {
             if (std::cin.fail()) oczyscBledy();
-            std::cerr << czerwony << "Wprowadż poprawną ciąg znaków który zbuduje karty jeszcze raz: " << reset;
+            std::cerr << czerwony << "Wprowadż ciąg znaków większy od 1: " << reset;
         }
         std::cout << "Ile wylosować kart?: ";
         while (!(std::cin >> ileKart)) {
@@ -83,7 +83,7 @@ private:
     }
     const void rozgrywka() {
         long long punkty[2] = { 0,0 }, rozmiar{ 8 }, ileKart{ 8 }, ileOdkrytych{};
-        std::string znak{ "pixel" };
+        std::string ciog_znakow{ "pixel" };
         auto karty = this->rysujKarty(ileKart, 0, " ");
         std::vector<stanKarty> kolejnosc;
         bool tura{ 0 };
@@ -101,18 +101,18 @@ private:
         std::string pseudomin[2] = { "nr.1","nr.2" };
         switch (ustawienia) {
         case 1:
-            nowaGra(pseudomin, rozmiar, znak, ileKart);
+            nowaGra(pseudomin, rozmiar, ciog_znakow, ileKart);
             break;
         case 2:
-            if (!odczytajGre(ileKart, rozmiar, znak, tura, ileOdkrytych, punkty, kolejnosc, karty, pseudomin)) nowaGra(pseudomin, rozmiar, znak, ileKart);
+            if (!odczytajGre(ileKart, rozmiar, ciog_znakow, tura, ileOdkrytych, punkty, kolejnosc, karty, pseudomin)) nowaGra(pseudomin, rozmiar, ciog_znakow, ileKart);
             break;
         }
 
-        karty = this->rysujKarty(ileKart, rozmiar, znak);
+        karty = this->rysujKarty(ileKart, rozmiar, ciog_znakow);
 
-        while (znak.size() <= 1) {
-            std::cout << "Wprowadż znaki do utworzenia kart: "; std::cin >> znak;
-            karty = this->rysujKarty(ileKart, rozmiar, znak);
+        while (ciog_znakow.size() <= 1) {
+            std::cout << "Wprowadż ciog_znakowi do utworzenia kart: "; std::cin >> ciog_znakow;
+            karty = this->rysujKarty(ileKart, rozmiar, ciog_znakow);
         }
         if (!karty.size()) {
             std::cerr << "Brak kart";
@@ -132,7 +132,7 @@ private:
             std::shuffle(kolejnosc.begin(), kolejnosc.end(), los);
         }
 
-        zapiszGre(ileKart, rozmiar, znak, tura, ileOdkrytych, punkty, kolejnosc, karty, pseudomin);
+        zapiszGre(ileKart, rozmiar, ciog_znakow, tura, ileOdkrytych, punkty, kolejnosc, karty, pseudomin);
         while (ileOdkrytych != ileKart) {
             this->narysujodnowa(tura, karty, kolejnosc, punkty, pseudomin);
 
@@ -180,7 +180,7 @@ private:
                 kolejnosc[numer2 - 1].czyOdsloniety = false;
                 tura = !tura;
             }
-            zapiszGre(ileKart, rozmiar, znak, tura, ileOdkrytych, punkty, kolejnosc, karty, pseudomin);
+            zapiszGre(ileKart, rozmiar, ciog_znakow, tura, ileOdkrytych, punkty, kolejnosc, karty, pseudomin);
         }
 
         this->narysujodnowa(tura, karty, kolejnosc, punkty, pseudomin);
@@ -239,14 +239,10 @@ private:
         } std::cout << reset;
     }
 
-    const inline void zapiszGre(const long long& ileKart, const size_t& rozmiar, const std::string& znak, const bool& tura, const long long& ileOdkrytych, const long long* punkty, const std::vector<stanKarty>& kolejnosc, const std::vector<std::vector<std::vector<char>>>& karty, const std::string* pseudomin) const {
+    const inline void zapiszGre(const long long& ileKart, const size_t& rozmiar, const std::string& ciog_znakow, const bool& tura, const long long& ileOdkrytych, const long long* punkty, const std::vector<stanKarty>& kolejnosc, const std::vector<std::vector<std::vector<char>>>& karty, const std::string* pseudomin) const {
         std::ofstream plik("pamiec_gry_memory.txt");
         if (plik.good()) {
-            plik << pseudomin[0] << ' ' << pseudomin[1] << '\n';
-            plik << ileKart << ' ' << rozmiar << ' ' << znak << '\n';
-            plik << punkty[0] << " " << punkty[1] << '\n';
-            plik << tura << '\n';
-            plik << ileOdkrytych << '\n';
+            plik << pseudomin[0] << ' ' << pseudomin[1] << '\n' << ileKart << ' ' << rozmiar << ' ' << ciog_znakow << '\n'<< punkty[0] << " " << punkty[1] << '\n'<< tura << '\n' << ileOdkrytych << '\n';
             for (const auto& i : kolejnosc) plik << i.ktory << ' ' << i.czyOdsloniety << '\n';
             plik << '\n';
         }
@@ -255,10 +251,10 @@ private:
     }
 
 
-    const inline bool odczytajGre(long long& ileKart, long long& rozmiar, std::string& znak, bool& tura, long long& ileOdkrytych, long long* punkty, std::vector<stanKarty>& kolejnosc, std::vector<std::vector<std::vector<char>>>& karty, std::string* pseudomin) const {
+    const inline bool odczytajGre(long long& ileKart, long long& rozmiar, std::string& ciog_znakow, bool& tura, long long& ileOdkrytych, long long* punkty, std::vector<stanKarty>& kolejnosc, std::vector<std::vector<std::vector<char>>>& karty, std::string* pseudomin) const {
         std::ifstream plik("pamiec_gry_memory.txt");
         if (plik.good()) {
-            plik >> pseudomin[0] >> pseudomin[1] >> ileKart >> rozmiar >> znak >> punkty[0] >> punkty[1] >> tura >> ileOdkrytych;
+            plik >> pseudomin[0] >> pseudomin[1] >> ileKart >> rozmiar >> ciog_znakow >> punkty[0] >> punkty[1] >> tura >> ileOdkrytych;
             kolejnosc.resize(2 * ileKart);
             for (int i{}; i < 2 * ileKart; ++i) plik >> kolejnosc[i].ktory >> kolejnosc[i].czyOdsloniety;
             plik.close();
@@ -294,9 +290,7 @@ private:
 
 
     const std::string inline kolorDlaLitery(char litera) const {
-        if (koloryLitery.find(litera) != koloryLitery.end()) {
-            return koloryLitery.at(litera);
-        }
+        if (koloryLitery.find(litera) != koloryLitery.end()) return koloryLitery.at(litera);
         return "\033[0m"; // Domyślny kolor (reset)
     }
 
