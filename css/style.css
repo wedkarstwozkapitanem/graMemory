@@ -34,6 +34,7 @@ nav {
     width: 500px;
     border-radius: 8px;
     border: 2px dotted silver;
+    background: #18742d8a;
 }
 
 
@@ -41,9 +42,21 @@ nav div {
     float:left;
     margin-left:20px;
     font-size:48px;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+nav div:hover {
+    background-color: black;
 }
 
 a {
     text-decoration: none;
     color:wheat;
+}
+
+@media (max-width:768px) {
+    article {
+        width: 100% !important;
+    }
 }
