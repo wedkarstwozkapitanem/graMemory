@@ -1,3 +1,9 @@
+/*
+*   autor: Dominik Łempicki Kapitan
+*   nazwa: Memory
+*/
+
+
 #include<algorithm>
 #include<chrono>
 #include<iostream>
@@ -171,9 +177,9 @@ private:
                 std::cout << czerwony << "\n\nNie pasuje!\n";
 
                 for (int i = 3; i > 0; --i) {
-                    std::cout << "Czas do zakrycia kart: " << i << " sekundy" << std::flush;
+                    std::cout << "Czas do zakrycia kart: " << i << ((i != 1) ? " sekundy" : " sekunda ");
                     std::this_thread::sleep_for(std::chrono::seconds(1));
-                    std::cout << "\r";
+                    std::cout << std::flush << "\r";
                 }
                 std::cout << reset;
                 kolejnosc[numer1 - 1].czyOdsloniety = false;
